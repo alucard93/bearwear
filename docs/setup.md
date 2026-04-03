@@ -6,8 +6,12 @@
 
 npx create-next-app@latest
 npx shadcn@latest init
-npm install -D prettier prettier-plugin-tailwindcss
-npm install --save-dev eslint-plugin-simple-import-sort
+npm i -D prettier prettier-plugin-tailwindcss
+npm i --save-dev eslint-plugin-simple-import-sort
+npm i drizzle-orm drizzle-seed pg dotenv
+npm i -D drizzle-kit tsx @types/pg
+
+
 ```
 
 ## PASSO A PASSO
@@ -173,5 +177,15 @@ export default eslintConfig
     @apply bg-background text-foreground;
   }
 }
+
+```
+
+3 - DEFINIR E CONFIGURAR O ORM(NESSE PROJETO DRIZZLE(AMBIENTE SERVERLESS))
+
+4 - CRIO A ESTRUTURA DE PASTAS DA IMAGEM ABAIXO
+
+![alt text](image-1.png)
+
+```
 
 ```
