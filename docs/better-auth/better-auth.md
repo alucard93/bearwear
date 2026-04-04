@@ -376,6 +376,7 @@ export function RegisterForm() {
 ```
 
 7 - CRIO O MEU .ENV DO BETTER_AUTH
+
 ```
 
 BETTER_AUTH_SECRET=WDAWDAWDAWDAWBDHBHWBD2HBQHWBDBBD3
@@ -397,7 +398,8 @@ export const auth = betterAuth({
 })
 ```
 
-9 - RODO O COMANDO 
+9 - RODO O COMANDO
+
 ```
   npx @better-auth/cli generate
 ```
@@ -563,8 +565,42 @@ export const accountRelations = relations(account, ({ one }) => ({
 ```
 
 11 - ATUALIZO O BANCO
+
 ```
   npx drizzle-kit push
 ```
 
-12 - 
+12 - SEGUINDO A DOCUMENTAÇÃO CRIO A SEGUINTE ESTRUTURA DE PASTA
+
+![alt text](image-2.png)
+
+```
+import { auth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
+
+export const { GET, POST } = toNextJsHandler(auth);
+```
+
+13 - SEGUINDO A DOC CRIO DENTRO DE LIB UM auth.ts E ADICIONO A CONFIGURAÇÃO DE AUTENTICAÇÃO QUE DESEJA
+
+```
+
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+
+import { db } from '@/app/db'
+
+export const auth = betterAuth({
+  emailAndPassword: {
+    enabled: true,
+  },
+  database: drizzleAdapter(db, {
+    provider: 'pg',
+  }),
+})
+
+
+```
+
+14 - SEGUINDO A DOCUMENTAÇÃO NO FORMULÁRIO CHAMO O BETTER AUTH
+``````
