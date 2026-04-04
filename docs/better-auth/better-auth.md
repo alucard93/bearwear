@@ -374,3 +374,30 @@ export function RegisterForm() {
 }
 
 ```
+
+7 - CRIO O MEU .ENV DO BETTER_AUTH
+```
+
+BETTER_AUTH_SECRET=WDAWDAWDAWDAWBDHBHWBD2HBQHWBDBBD3
+
+```
+
+8 - EM lib\auth.ts
+
+```
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+
+import { db } from '@/db' // your drizzle instance
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: 'pg', // or "mysql", "sqlite"
+  }),
+})
+```
+
+9 - RODO O COMANDO 
+```
+  npx @better-auth/cli generate
+```
