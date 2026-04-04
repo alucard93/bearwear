@@ -1,6 +1,7 @@
 # Documentação de Autenticação - Bearwear
 
 ## 📋 Índice
+
 1. [Visão Geral](#visão-geral)
 2. [Estrutura de Componentes](#estrutura-de-componentes)
 3. [Correções e Ajustes](#correções-e-ajustes)
@@ -16,6 +17,7 @@
 ## Visão Geral
 
 Sistema de autenticação completo construído com:
+
 - **Frontend**: React Hook Form + Zod para validação
 - **UI**: shadcn/ui v4 (Field + Controller pattern)
 - **Backend**: Better Auth com Drizzle ORM
@@ -29,11 +31,13 @@ Sistema de autenticação completo construído com:
 ### 1. `components/Form/auth-form.tsx` - Container Principal
 
 **Responsabilidades:**
+
 - Gerenciamento de abas (Entrar / Criar Conta)
 - Estado controlado do componente ativo
 - Aplicação de estilos condicionais
 
 **Características:**
+
 - Tabs gerenciadas com `useState('sign-in')`
 - TabsList com fundo `zinc-100` e `rounded-xl`
 - TabsTrigger ativo: `bg-white text-zinc-900 shadow-sm`
@@ -41,6 +45,7 @@ Sistema de autenticação completo construído com:
 - Transição suave com `transition-all`
 
 **Dependências:**
+
 - LoginForm e RegisterForm
 - CardContent de `@/components/ui/card`
 - Tabs components de `@/components/ui/tabs`
@@ -50,10 +55,12 @@ Sistema de autenticação completo construído com:
 ### 2. `components/Form/components/login-form.tsx` - Formulário de Login
 
 **Campos:**
+
 - Email (validação de formato)
 - Senha (mínimo 8 caracteres)
 
 **Implementação:**
+
 ```typescript
 export default function LoginForm() {
   const form = useForm<LoginValues>({
@@ -87,17 +94,20 @@ export default function LoginForm() {
 ### 3. `components/Form/components/register-form.tsx` - Formulário de Registro
 
 **Campos:**
+
 - Nome (obrigatório)
 - Email (validação de formato)
 - Senha (mínimo 8 caracteres)
 - Confirmação de Senha (idêntica à senha)
 
 **Layout Responsivo:**
+
 - Grid 2 colunas em `md` (Nome + Email lado-a-lado)
 - Stack vertical em mobile
 - Campos de senha em largura completa
 
 **Validações Especiais:**
+
 - Refine Zod para confirmar senha idêntica
 - Mensagens de erro personalizadas
 
@@ -117,15 +127,17 @@ export const loginSchema = z.object({
 })
 
 // Schema de Registro
-export const registerSchema = z.object({
-  name: z.string().min(2, 'Nome obrigatório'),
-  email: z.string().email('Email inválido'),
-  password: z.string().min(8, 'Mínimo 8 caracteres'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Senhas não conferem',
-  path: ['confirmPassword'],
-})
+export const registerSchema = z
+  .object({
+    name: z.string().min(2, 'Nome obrigatório'),
+    email: z.string().email('Email inválido'),
+    password: z.string().min(8, 'Mínimo 8 caracteres'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Senhas não conferem',
+    path: ['confirmPassword'],
+  })
 
 // Types Exportados
 export type LoginValues = z.infer<typeof loginSchema>
@@ -133,6 +145,7 @@ export type RegisterValues = z.infer<typeof registerSchema>
 ```
 
 **Benefícios:**
+
 - Source of truth para validação
 - Types automaticamente sincronizados
 - Reutilizáveis em endpoints API
@@ -144,10 +157,12 @@ export type RegisterValues = z.infer<typeof registerSchema>
 ### Hydration Warning Resolution
 
 **Problema:**
+
 - Extensões do navegador modificam classes no `body` antes da hidratação React
 - Causa: "Did not expect server HTML to contain a text node in..."
 
 **Solução:**
+
 ```typescript
 // app/layout.tsx
 <html suppressHydrationWarning>
@@ -164,11 +179,13 @@ export type RegisterValues = z.infer<typeof registerSchema>
 ### Configuração de Fontes
 
 **Problema:**
+
 - Anton: Falta especificação de weight
 - Poppins: Falta array de weights
 - Resultado: Warnings de prebuild-install deprecated
 
 **Solução:**
+
 ```typescript
 // app/layout.tsx
 const anton = Anton({
@@ -191,18 +208,20 @@ const poppins = Poppins({
 ### Estilo das Abas (Tab Highlighting)
 
 **Problema:**
+
 - CSS data-active selectors não acionando cambios visuais
 - Abas pareciam desativadas
 
 **Solução Implementada:**
+
 - Troca de data-attribute para estado controlado `activeTab`
 - Conditional className baseado em estado
 
 ```typescript
-<TabsTrigger 
+<TabsTrigger
   className={`rounded-lg px-3 text-xs font-semibold transition-all ${
-    activeTab === 'sign-in' 
-      ? 'bg-white text-zinc-900 shadow-sm' 
+    activeTab === 'sign-in'
+      ? 'bg-white text-zinc-900 shadow-sm'
       : 'text-zinc-600'
   }`}
 >
@@ -230,28 +249,30 @@ npm i better-auth
 ### Arquivo de Configuração: `lib/auth.ts`
 
 ```typescript
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@/app/db";
-import * as schema from "@/app/db/schema";
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { db } from '@/app/db'
+import * as schema from '@/app/db/schema'
 
 export const auth = new BetterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
     schema,
   }),
   providers: [],
-});
+})
 
-export type Session = typeof auth.$Infer.Session;
-export type User = typeof auth.$Infer.User;
+export type Session = typeof auth.$Infer.Session
+export type User = typeof auth.$Infer.User
 ```
 
 **Correção Crítica:**
+
 - Inicial: `import { db } from "@/db"` ❌ (alias inválido)
 - Corrigido: `import { db } from "@/app/db"` ✅ (localização real)
 
-**Razão:** 
+**Razão:**
+
 - Database realmente está em `app/db/`
 - Path alias `@/db` não existe
 - CLI geração falhava por módulo não encontrado
@@ -265,12 +286,14 @@ npx @better-auth/cli generate --yes
 ```
 
 **Resultado:**
+
 - ✅ Schema gerado com sucesso
 - 📁 Arquivo criado: `auth-schema.ts` (raiz do projeto)
 - 📊 Contém definições: users, sessions, accounts, verifications
 - ⚠️ Warning (não-bloqueante): Base URL não configurada
 
 **Arquivo Gerado:**
+
 ```typescript
 // auth-schema.ts
 import { pgTable, pgEnum, foreignKey, ... } from "drizzle-orm/pg-core"
@@ -349,18 +372,20 @@ bearwear/
 ## Validações Implementadas
 
 ### Login Form
-| Campo | Regra | Status |
-|-------|-------|--------|
-| Email | RFC 5322 format | ✅ Enforced |
+
+| Campo | Regra               | Status      |
+| ----- | ------------------- | ----------- |
+| Email | RFC 5322 format     | ✅ Enforced |
 | Senha | Mínimo 8 caracteres | ✅ Enforced |
 
 ### Register Form
-| Campo | Regra | Status |
-|-------|-------|--------|
-| Nome | Mínimo 2 caracteres | ✅ Enforced |
-| Email | RFC 5322 format | ✅ Enforced |
-| Senha | Mínimo 8 caracteres | ✅ Enforced |
-| Confirmação | Idêntica à senha | ✅ Enforced via refine |
+
+| Campo       | Regra               | Status                 |
+| ----------- | ------------------- | ---------------------- |
+| Nome        | Mínimo 2 caracteres | ✅ Enforced            |
+| Email       | RFC 5322 format     | ✅ Enforced            |
+| Senha       | Mínimo 8 caracteres | ✅ Enforced            |
+| Confirmação | Idêntica à senha    | ✅ Enforced via refine |
 
 **Tecnologia:** Zod com React Hook Form (zodResolver)
 
@@ -369,12 +394,14 @@ bearwear/
 ## Estilo e Design
 
 ### Paleta de Cores
+
 - TabsList Background: `zinc-100` (cinza claro)
 - TabsTrigger Ativo: `bg-white text-zinc-900`
 - TabsTrigger Inativo: `text-zinc-600`
 - Sombra Ativa: `shadow-sm`
 
 ### Tipografia
+
 - **Anton**: Títulos, headers
   - Weight: 400
   - Usage: `font-anton`
@@ -383,12 +410,14 @@ bearwear/
   - Usage: `font-poppins`
 
 ### Responsividade
+
 - Mobile-first approach
 - Grid de campos em md+ (2 colunas)
 - Full-width em mobile
 - Gap e padding adaptáveis
 
 ### Transições
+
 - `transition-all` em buttons e tabs
 - Smooth color changes
 - CSS-based animations
@@ -397,18 +426,18 @@ bearwear/
 
 ## Status Atual
 
-| Componente | Aspecto | Status | Observações |
-|------------|--------|--------|-------------|
-| **AuthForm** | Estrutura | ✅ Completa | Abas funcionando |
-| **LoginForm** | Validação | ✅ Implementada | Zod + React Hook Form |
-| **RegisterForm** | Validação | ✅ Implementada | Confirmação de senha |
-| **Schemas** | Centralização | ✅ Configurada | Types automáticos |
-| **Styling** | Design | ✅ Finalizado | Matches mockup |
-| **Hidratação** | Warnings | ✅ Resolvido | suppressHydrationWarning |
-| **Fontes** | Configuração | ✅ Corrigida | Pesos explícitos |
-| **Better Auth** | Setup | ✅ Instalado | CLI schema gerado |
-| **Form Handlers** | Integração | 🟡 Pendente | Ainda console.log |
-| **Base URL Auth** | Environment | 🟡 Pendente | BETTER_AUTH_URL missing |
+| Componente        | Aspecto       | Status          | Observações              |
+| ----------------- | ------------- | --------------- | ------------------------ |
+| **AuthForm**      | Estrutura     | ✅ Completa     | Abas funcionando         |
+| **LoginForm**     | Validação     | ✅ Implementada | Zod + React Hook Form    |
+| **RegisterForm**  | Validação     | ✅ Implementada | Confirmação de senha     |
+| **Schemas**       | Centralização | ✅ Configurada  | Types automáticos        |
+| **Styling**       | Design        | ✅ Finalizado   | Matches mockup           |
+| **Hidratação**    | Warnings      | ✅ Resolvido    | suppressHydrationWarning |
+| **Fontes**        | Configuração  | ✅ Corrigida    | Pesos explícitos         |
+| **Better Auth**   | Setup         | ✅ Instalado    | CLI schema gerado        |
+| **Form Handlers** | Integração    | 🟡 Pendente     | Ainda console.log        |
+| **Base URL Auth** | Environment   | 🟡 Pendente     | BETTER_AUTH_URL missing  |
 
 ---
 
@@ -417,6 +446,7 @@ bearwear/
 ### 1. Conectar Formulários a Better Auth (Priority: ALTA)
 
 **LoginForm:**
+
 ```typescript
 const auth = useAuth() // ou import { auth } from "@/lib/auth"
 
@@ -433,6 +463,7 @@ const onSubmit = async (data: LoginValues) => {
 ```
 
 **RegisterForm:**
+
 ```typescript
 const onSubmit = async (data: RegisterValues) => {
   try {
@@ -450,6 +481,7 @@ const onSubmit = async (data: RegisterValues) => {
 ### 2. Configurar Variáveis de Ambiente (Priority: MÉDIA)
 
 **`.env.local`:**
+
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/bearwear
 BETTER_AUTH_URL=http://localhost:3000
@@ -459,9 +491,10 @@ BETTER_AUTH_SECRET=your-secret-key-here
 ### 3. Criar Rotas de API (Priority: MÉDIA)
 
 **`app/api/auth/[...auth]/route.ts`:**
+
 ```typescript
-import { toNextJsHandler } from "better-auth/next-js"
-import { auth } from "@/lib/auth"
+import { toNextJsHandler } from 'better-auth/next-js'
+import { auth } from '@/lib/auth'
 
 export const { POST, GET } = toNextJsHandler(auth)
 ```
