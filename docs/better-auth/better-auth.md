@@ -9,6 +9,7 @@
 ```
   npm install react-hook-form @hookform/resolvers zod
   npx shadcn add card field input tabs textarea
+  npm i better-auth
 ```
 
 3 - FAÇO A CRIAÇÃO DA ESTRUTURA
