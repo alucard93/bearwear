@@ -3,6 +3,9 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Anton, Poppins } from 'next/font/google'
 
+import { Header } from '@/components/Header/header'
+import { Toaster } from '@/components/ui/sonner'
+
 const anton = Anton({
   variable: '--font-anton',
   weight: '400',
@@ -32,7 +35,9 @@ export default function RootLayout({
       className={`${anton.variable} ${poppins.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
+        <Header />
         {children}
+        <Toaster />
       </body>
     </html>
   )
